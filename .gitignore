@@ -1,2 +1,3 @@
 node_modules
 sync-git.ps1
+database.sqlite

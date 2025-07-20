@@ -2,6 +2,7 @@
   "dependencies": {
     "awilix": "^12.0.5",
     "axios": "^1.10.0",
+    "bcryptjs": "^3.0.2",
     "celebrate": "^15.0.3",
     "clerk": "^0.8.3",
     "compression": "^1.8.1",
@@ -33,6 +34,8 @@
     "sequelize-auto": "^0.8.8",
     "sequelize-cli": "^6.6.3",
     "socket.io": "^4.8.1",
+    "sqlite3": "^5.1.7",
+    "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "tsoa": "^6.6.0",
     "winston": "^3.17.0",
@@ -48,5 +51,8 @@
   },
   "name": "api-rest",
   "version": "1.0.0",
-  "main": "index.js"
+  "main": "index.js",
+  "devDependencies": {
+    "swagger-autogen": "^2.23.7"
+  }
 }

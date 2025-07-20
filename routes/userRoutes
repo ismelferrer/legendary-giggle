@@ -1,0 +1,42 @@
+const express = require('express');
+const router = express.Router();
+const auth = require('../middleware/auth');
+const userController = require('../controllers/userController');
+
+/**
+ * @swagger
+ * api/register:
+ *   post:
+ *     summary: Registra un nuevo usuario
+ *     tags: [Auth]
+ */
+router.post('/register', userController.register);
+
+/**
+ * @swagger
+ * api/login:
+ *   post:
+ *     summary: Inicia sesión
+ *     tags: [Auth]
+ */
+router.post('/login', userController.login);
+
+/**
+ * @swagger
+ * api/edit:
+ *   put:
+ *     summary: Edita el usuario autenticado
+ *     tags: [User]
+ */
+router.put('/edit', auth, userController.editUser);
+
+/**
+ * @swagger
+ * api/delete:
+ *   delete:
+ *     summary: Elimina el usuario autenticado
+ *     tags: [User]
+ */
+router.delete('/delete', auth, userController.deleteUser);
+
+module.exports = router;
