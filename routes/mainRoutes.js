@@ -9,7 +9,7 @@ const router = express.Router();
  *     tags: [Main]
  */
 router.get('/', (req, res) => {
-  res.send('Hola Mundo desde la API!');
+  res.send('Hola Mundo desde la API Test!');
 });
 
 /**
