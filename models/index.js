@@ -10,7 +10,8 @@ const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 
 let sequelize;
-if(env === 'production'){
+console.log(process.env);
+if(env === "production"){
   sequelize = new Sequelize(process.env.DATABASE_URL, config);
 }
 else{
