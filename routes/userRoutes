@@ -39,4 +39,22 @@ router.put('/edit', auth, userController.editUser);
  */
 router.delete('/delete', auth, userController.deleteUser);
 
+/**
+ * @swagger
+ * api/profile:
+ *   get:
+ *     summary: Obtiene el perfil completo del usuario (incluye datos de Supabase)
+ *     tags: [User]
+ */
+router.get('/profile', auth, userController.getUserProfile);
+
+/**
+ * @swagger
+ * api/sync:
+ *   post:
+ *     summary: Sincroniza datos del usuario con Supabase
+ *     tags: [User]
+ */
+router.post('/sync', auth, userController.syncUserData);
+
 module.exports = router;
