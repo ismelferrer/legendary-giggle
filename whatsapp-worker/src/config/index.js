@@ -38,6 +38,7 @@ const config = {
     clientOptions: {
       authStrategy: 'SupabaseAuth',
       puppeteer: {
+        headless: true,
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
@@ -46,8 +47,26 @@ const config = {
           '--no-first-run',
           '--no-zygote',
           '--single-process',
-          '--disable-gpu'
-        ]
+          '--disable-gpu',
+          '--disable-background-timer-throttling',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-renderer-backgrounding',
+          '--disable-extensions',
+          '--disable-plugins',
+          '--disable-default-apps',
+          '--disable-background-networking',
+          '--disable-sync',
+          '--disable-translate',
+          '--hide-scrollbars',
+          '--metrics-recording-only',
+          '--mute-audio',
+          '--no-default-browser-check',
+          '--no-first-run',
+          '--safebrowsing-disable-auto-update',
+          '--disable-ipc-flooding-protection'
+        ],
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+        timeout: 60000
       }
     }
   },
