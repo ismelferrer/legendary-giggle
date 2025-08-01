@@ -95,6 +95,48 @@ class ApiServer {
       res.json(clientInfo || { status: 'not_ready' });
     });
 
+    // Get WhatsApp session info
+    this.app.get('/api/whatsapp/session', (req, res) => {
+      const sessionInfo = whatsappBot.getSessionInfo();
+      res.json(sessionInfo);
+    });
+
+    // Delete WhatsApp session (logout)
+    this.app.delete('/api/whatsapp/session', async (req, res) => {
+      try {
+        if (whatsappBot.useSupabaseAuth && whatsappBot.authStrategy) {
+          await whatsappBot.authStrategy.deleteSession();
+          res.json({ success: true, message: 'Session deleted from Supabase' });
+        } else {
+          res.json({ success: false, message: 'Local auth does not support remote session deletion' });
+        }
+      } catch (error) {
+        logger.error('Error deleting session:', error);
+        res.status(500).json({
+          success: false,
+          error: error.message,
+        });
+      }
+    });
+
+    // Get all sessions (Supabase only)
+    this.app.get('/api/whatsapp/sessions', async (req, res) => {
+      try {
+        if (whatsappBot.useSupabaseAuth && whatsappBot.authStrategy) {
+          const sessions = await whatsappBot.authStrategy.getAllSessions();
+          res.json({ success: true, sessions });
+        } else {
+          res.json({ success: false, message: 'Only available with Supabase authentication' });
+        }
+      } catch (error) {
+        logger.error('Error getting sessions:', error);
+        res.status(500).json({
+          success: false,
+          error: error.message,
+        });
+      }
+    });
+
     // Send message endpoint
     this.app.post('/api/whatsapp/send', async (req, res) => {
       try {

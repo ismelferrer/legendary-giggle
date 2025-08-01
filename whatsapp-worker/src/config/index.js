@@ -23,12 +23,20 @@ const config = {
     maxRetriesPerRequest: null,
   },
 
+  // Supabase configuration
+  supabase: {
+    url: process.env.SUPABASE_URL,
+    anonKey: process.env.SUPABASE_ANON_KEY,
+    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+  },
+
   // WhatsApp configuration
   whatsapp: {
     sessionName: process.env.WHATSAPP_SESSION_NAME || 'whatsapp-session',
     webhookUrl: process.env.WHATSAPP_WEBHOOK_URL,
+    useSupabaseAuth: process.env.USE_SUPABASE_AUTH === 'true',
     clientOptions: {
-      authStrategy: 'LocalAuth',
+      authStrategy: 'SupabaseAuth',
       puppeteer: {
         args: [
           '--no-sandbox',
@@ -90,11 +98,23 @@ const requiredEnvVars = [
   'WEBSERVICE_API_URL',
 ];
 
+// Supabase variables are required if using Supabase auth
+const supabaseAuthEnabled = process.env.USE_SUPABASE_AUTH === 'true';
+if (supabaseAuthEnabled) {
+  requiredEnvVars.push('SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY');
+}
+
 const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
 
 if (missingEnvVars.length > 0) {
   console.warn('⚠️ Missing environment variables:', missingEnvVars.join(', '));
   console.warn('⚠️ Some features may not work correctly. Please check your .env file.');
+}
+
+if (supabaseAuthEnabled) {
+  console.info('✅ Supabase authentication enabled for WhatsApp sessions');
+} else {
+  console.warn('⚠️ Using local file authentication - not suitable for Render deployment');
 }
 
 module.exports = config;

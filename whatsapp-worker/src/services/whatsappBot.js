@@ -5,6 +5,7 @@ const config = require('../config');
 const logger = require('../utils/logger');
 const webserviceClient = require('./webserviceClient');
 const queueService = require('./queueService');
+const SupabaseAuthStrategy = require('./supabaseAuth');
 
 class WhatsAppBot {
   constructor() {
@@ -12,6 +13,8 @@ class WhatsAppBot {
     this.isReady = false;
     this.isConnected = false;
     this.qrCode = null;
+    this.authStrategy = null;
+    this.useSupabaseAuth = config.whatsapp.useSupabaseAuth;
     this.sessionPath = `.wwebjs_auth/${config.whatsapp.sessionName}`;
     this.reconnectAttempts = 0;
     this.maxReconnectAttempts = 5;
@@ -23,11 +26,27 @@ class WhatsAppBot {
     try {
       logger.whatsapp('Initializing WhatsApp client...');
 
-      this.client = new Client({
-        authStrategy: new LocalAuth({ 
+      // Setup authentication strategy
+      if (this.useSupabaseAuth) {
+        logger.whatsapp('Using Supabase authentication strategy');
+        this.authStrategy = new SupabaseAuthStrategy({
+          sessionName: config.whatsapp.sessionName
+        });
+        
+        const setupSuccess = await this.authStrategy.setup();
+        if (!setupSuccess) {
+          throw new Error('Failed to setup Supabase authentication strategy');
+        }
+      } else {
+        logger.whatsapp('Using local file authentication strategy');
+        this.authStrategy = new LocalAuth({ 
           clientId: config.whatsapp.sessionName,
           dataPath: this.sessionPath,
-        }),
+        });
+      }
+
+      this.client = new Client({
+        authStrategy: this.authStrategy,
         puppeteer: config.whatsapp.clientOptions.puppeteer,
         webVersionCache: {
           type: 'remote',
@@ -485,17 +504,36 @@ ${config.bot.prefix}info - Información del bot
 
   // Get client info
   getClientInfo() {
+    const baseInfo = {
+      isReady: this.isReady,
+      isConnected: this.isConnected,
+      qrCode: this.qrCode,
+      authType: this.useSupabaseAuth ? 'supabase' : 'local',
+    };
+
     if (!this.client || !this.isReady) {
-      return null;
+      return baseInfo;
     }
 
     return {
-      isReady: this.isReady,
-      isConnected: this.isConnected,
+      ...baseInfo,
       number: this.client.info?.wid?.user,
       name: this.client.info?.pushname,
       platform: this.client.info?.platform,
-      qrCode: this.qrCode,
+    };
+  }
+
+  // Get session info (especially useful for Supabase auth)
+  getSessionInfo() {
+    if (this.useSupabaseAuth && this.authStrategy && typeof this.authStrategy.getSessionInfo === 'function') {
+      return this.authStrategy.getSessionInfo();
+    }
+
+    return {
+      sessionName: config.whatsapp.sessionName,
+      authType: 'local',
+      authenticated: this.isReady,
+      hasSession: this.isReady,
     };
   }
 
@@ -506,6 +544,10 @@ ${config.bot.prefix}info - Información del bot
       
       if (this.client) {
         await this.client.destroy();
+      }
+
+      if (this.authStrategy && typeof this.authStrategy.destroy === 'function') {
+        await this.authStrategy.destroy();
       }
       
       logger.whatsapp('WhatsApp client shut down successfully');
