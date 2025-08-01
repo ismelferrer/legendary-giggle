@@ -1,3 +1,20 @@
 node_modules
 sync-git.ps1
 database.sqlite
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+
+# Redis dump
+dump.rdb
+
+# Queue logs
+*.log
+logs/
+
+# Temporary files
+temp/
+tmp/
