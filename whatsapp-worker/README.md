@@ -66,23 +66,40 @@ Un worker de fondo completo que integra un bot de WhatsApp usando `whatsapp-web.
 
 ## 🏃 Ejecución
 
-### Desarrollo
+### Desarrollo Local
 ```bash
 npm run dev
 ```
 
-### Producción
+### Producción Local
 ```bash
 npm start
 ```
 
-### Con PM2 (recomendado para producción)
+### Con PM2 (para servidores VPS)
 ```bash
 npm install -g pm2
 pm2 start index.js --name whatsapp-worker
 pm2 startup
 pm2 save
 ```
+
+### 🌐 Deployment en Render (Recomendado)
+```bash
+# 1. Preparar para deployment
+./scripts/deploy-render.sh
+
+# 2. Seguir la guía completa
+ver RENDER_DEPLOYMENT.md
+```
+
+**¿Por qué Render?**
+- ✅ Deployment automático desde Git
+- ✅ Escalado automático
+- ✅ Health checks integrados
+- ✅ Redis add-on incluido
+- ✅ SSL/HTTPS automático
+- ✅ Free tier disponible
 
 ## 📱 Configuración de WhatsApp
 
