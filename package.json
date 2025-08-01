@@ -1,16 +1,14 @@
 {
   "dependencies": {
-    "@supabase/supabase-js": "^2.53.0",
     "awilix": "^12.0.5",
-    "axios": "^1.11.0",
+    "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
-    "bull": "^4.16.5",
     "celebrate": "^15.0.3",
     "clerk": "^0.8.3",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
+    "dotenv": "^17.2.0",
     "express": "^4.21.2",
     "express-async-errors": "^3.1.1",
     "express-mongo-sanitize": "^2.2.0",
@@ -31,7 +29,6 @@
     "pino": "^9.7.0",
     "qrcode": "^1.5.4",
     "rate-limiter-flexible": "^7.1.1",
-    "redis": "^5.7.0",
     "sentry": "^0.1.2",
     "sequelize": "^6.37.7",
     "sequelize-auto": "^0.8.8",
@@ -44,18 +41,33 @@
     "winston": "^3.17.0",
     "xss-clean": "^0.1.4",
     "yup": "^1.6.1",
-    "zod": "^4.0.5"
+    "zod": "^4.0.5",
+    "@supabase/supabase-js": "^2.39.0",
+    "bull": "^4.12.0",
+    "redis": "^4.6.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "npm install",
+    "postbuild": "node scripts/setup.js",
+    "test": "jest",
+    "health": "curl -f http://localhost:$PORT/health || exit 1",
+    "db:migrate": "npx sequelize-cli db:migrate",
+    "db:seed": "npx sequelize-cli db:seed:all",
+    "setup": "node scripts/setup.js"
   },
   "engines": {
-    "node": ">=22.17.0"
+    "node": ">=18.0.0"
   },
   "name": "api-rest",
   "version": "1.0.0",
   "main": "index.js",
+  "description": "API REST with Supabase and Background Worker integration",
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "swagger-autogen": "^2.23.7"
+    "swagger-autogen": "^2.23.7",
+    "nodemon": "^3.0.0"
   }
 }
